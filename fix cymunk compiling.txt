@@ -1,0 +1,58 @@
+Compile cymunk with mingw-w64 (6.3.0) and python 64bit (2.7.13)
+
+gcc: error: unrecognized command line option '-mno-cygwin'; did you mean '-mno-c
+lwb'?
+
+substitute '-mno-cygwin' in Lib/distutils/cygwinccompiler.py with '' from
+
+        if self.gcc_version < '4' or is_cygwingcc(): #this not work as expected for mingw > 4
+            no_cygwin = ' -mno-cygwin'
+        else:
+            no_cygwin = ''
+
+The upper fix should be implemented in the setup.py file of cymunk as happens in pymunk https://github.com/viblo/pymunk/blob/master/setup.py (line 89)
+
+--------------------------------------------------------------------------
+Next error is this:
+
+pmunk-physics\src\cpspacestep.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk
+-physics\src\cparray.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\
+src\cparbiter.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\cpc
+ollision.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\cpbbtree
+.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\cpsweep1d.o buil
+d\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\chipmunk.o build\temp.w
+in-amd64-2.7\Release\cymunk\chipmunk-physics\src\cpspacequery.o build\temp.win-a
+md64-2.7\Release\cymunk\chipmunk-physics\src\cpbb.o build\temp.win-amd64-2.7\Rel
+ease\cymunk\chipmunk-physics\src\cpshape.o build\temp.win-amd64-2.7\Release\cymu
+nk\chipmunk-physics\src\cpspace.o build\temp.win-amd64-2.7\Release\cymunk\chipmu
+nk-physics\src\cpvect.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics
+\src\cppolyshape.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\
+cpspacecomponent.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\
+cpbody.o build\temp.win-amd64-2.7\Release\cymunk\chipmunk-physics\src\cphashset.
+o "-LC:\Program Files\Python27x64\libs" "-LC:\Program Files\Python27x64\PCbuild\
+amd64" "-LC:\Program Files\Python27x64\PC\VS9.0\amd64" -lpython27 -lmsvcr90 -o b
+uild\lib.win-amd64-2.7\cymunk\cymunk.pyd
+C:/Program Files/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/6.3.0/../..
+/../../x86_64-w64-mingw32/bin/ld.exe: warning: cannot find entry symbol _DllMain
+@12; defaulting to 000000006f281000
+build\temp.win-amd64-2.7\Release\cymunk\cymunk.o:cymunk.c:(.text+0x49103): undef
+ined reference to `__imp_Py_InitModule4'
+collect2.exe: error: ld returned 1 exit status
+dllwrap: gcc exited with status 1
+error: command 'C:\\Program Files\\mingw-w64\\mingw64\\bin\\dllwrap.exe' failed
+with exit status 1
+
+Fix it by:
+change Py_InitModule4 to Py_InitModule4_64 in cymunk.c file
+
+this complete the build and create a .pyd file but the module seem to be broken (is installed, but return an error if you try import it in a script)
+
+OR
+
+add -DMS_WIN64 to gcc arguments in setup.py
+always compile with some warnings but isn't imported in examples
+
+--------------------------------------------------------------------------
+Next step is to fix  (_dllmain parameters warnings) that seem to raise the import error when use the module in python (i don't know how to fix that)
+
+Try to install it with python setup.py install

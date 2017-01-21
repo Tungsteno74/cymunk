@@ -1,0 +1,3 @@
+LIBRARY cymunk.pyd
+EXPORTS
+initcymunk
