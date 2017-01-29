@@ -48,7 +48,7 @@ else:
 ext = Extension('cymunk.cymunk',
     cymunk_files + c_chipmunk_files,
     include_dirs=c_chipmunk_incs,
-    extra_compile_args=[cstdarg, '-ffast-math', '-fPIC', '-DCHIPMUNK_FFI'])
+    extra_compile_args=[cstdarg, '-DMS_WIN64', '-ffast-math', '-fPIC', '-DCHIPMUNK_FFI'])
  
 
 setup(
