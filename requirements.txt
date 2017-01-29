@@ -1,8 +1,1 @@
 Cython>=0.15
-
-
-examples requirements:
-pytest (reinstall with pip if give problems)
-pyglet (via pip)
-pygame (via pip)
-pygame (via pip)
